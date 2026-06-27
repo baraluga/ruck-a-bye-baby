@@ -2,7 +2,6 @@ import RuckCore
 import SwiftUI
 #if os(watchOS)
 import AVFoundation
-import WatchKit
 #endif
 
 struct WatchContentView: View {
@@ -178,9 +177,7 @@ private enum WatchMetronomeFeedback {
 
     static func playTick() {
         #if os(watchOS)
-        if !audioPlayer.playTick() {
-            WKInterfaceDevice.current().play(.click)
-        }
+        _ = audioPlayer.playTick()
         #endif
     }
 }
