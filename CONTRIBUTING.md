@@ -63,6 +63,15 @@ Build the watchOS app shell without signing:
 xcodebuild -project RuckABaby.xcodeproj -scheme RuckABabyWatchApp -destination 'generic/platform=watchOS Simulator' CODE_SIGNING_ALLOWED=NO build
 ```
 
+Run the Watch tracer bullet in Simulator:
+
+```sh
+open -a Simulator
+xcodebuild -project RuckABaby.xcodeproj -scheme RuckABabyWatchApp -destination 'platform=watchOS Simulator,name=Apple Watch SE 3 (44mm)' CODE_SIGNING_ALLOWED=NO build
+```
+
+Then launch the `RuckABabyWatchApp` scheme from Xcode on `Apple Watch SE 3 (44mm)` or another available watchOS simulator. Press Start and confirm the visual pulse begins. If simulator audio is routed correctly, the short tick should follow the active SPM; Zone 1 increases tempo, Zone 2 holds it, Zone 3 decreases it, and Stop stops the pulse and tick.
+
 Run on hardware from Xcode after selecting a development team. Do not expect GitHub Actions to install on a real iPhone or Apple Watch.
 
 ## Simulator vs Hardware
@@ -72,15 +81,16 @@ Good simulator checks:
 - App target compilation.
 - SwiftUI shell launches.
 - Platform-neutral unit tests.
-- Basic iOS/watchOS navigation smoke tests once added.
+- Watch metronome visual pulse and fake-zone tempo changes.
+- Watch metronome audio smoke checks when the simulator and host audio route cooperate.
 
 Requires real paired hardware:
 
 - Apple Watch workout behavior.
 - Live heart-rate and distance data.
 - HealthKit workout save behavior.
-- Watch-to-headphones Bluetooth route behavior.
 - Metronome audibility, latency, and safety checks.
+- Watch-to-headphones Bluetooth route behavior.
 
 ## Linting and Formatting
 
@@ -106,7 +116,6 @@ The `CI` workflow runs on pull requests, direct pushes to `main`, and manual dis
 ## Non-Goals For Story 0
 
 - No HealthKit workout tracking.
-- No real metronome.
 - No WatchConnectivity sync.
 - No App Store or TestFlight automation.
 - No production signing secrets in CI.

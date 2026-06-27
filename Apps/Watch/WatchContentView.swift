@@ -1,6 +1,7 @@
 import RuckCore
 import SwiftUI
 #if os(watchOS)
+import AVFoundation
 import WatchKit
 #endif
 
@@ -169,13 +170,112 @@ private final class WatchMetronomeViewModel: ObservableObject {
     }
 }
 
+@MainActor
 private enum WatchMetronomeFeedback {
+    #if os(watchOS)
+    private static let audioPlayer = WatchTickAudioPlayer()
+    #endif
+
     static func playTick() {
         #if os(watchOS)
-        WKInterfaceDevice.current().play(.click)
+        if !audioPlayer.playTick() {
+            WKInterfaceDevice.current().play(.click)
+        }
         #endif
     }
 }
+
+#if os(watchOS)
+private final class WatchTickAudioPlayer {
+    private var player: AVAudioPlayer?
+    private var didAttemptSetup = false
+
+    func playTick() -> Bool {
+        if player == nil, !didAttemptSetup {
+            didAttemptSetup = true
+            player = makePlayer()
+        }
+
+        guard let player else { return false }
+
+        player.currentTime = 0
+        return player.play()
+    }
+
+    private func makePlayer() -> AVAudioPlayer? {
+        do {
+            let session = AVAudioSession.sharedInstance()
+            try session.setCategory(.playback, mode: .default)
+            try session.setActive(true)
+
+            let player = try AVAudioPlayer(data: Self.tickWaveData())
+            player.prepareToPlay()
+            player.volume = 1
+            return player
+        } catch {
+            return nil
+        }
+    }
+
+    private static func tickWaveData() -> Data {
+        let sampleRate = 16_000
+        let duration = 0.035
+        let frameCount = Int(Double(sampleRate) * duration)
+        let bytesPerSample = 2
+        let dataByteCount = frameCount * bytesPerSample
+
+        var data = Data()
+        data.appendASCII("RIFF")
+        data.appendLittleEndianUInt32(UInt32(36 + dataByteCount))
+        data.appendASCII("WAVE")
+        data.appendASCII("fmt ")
+        data.appendLittleEndianUInt32(16)
+        data.appendLittleEndianUInt16(1)
+        data.appendLittleEndianUInt16(1)
+        data.appendLittleEndianUInt32(UInt32(sampleRate))
+        data.appendLittleEndianUInt32(UInt32(sampleRate * bytesPerSample))
+        data.appendLittleEndianUInt16(UInt16(bytesPerSample))
+        data.appendLittleEndianUInt16(UInt16(bytesPerSample * 8))
+        data.appendASCII("data")
+        data.appendLittleEndianUInt32(UInt32(dataByteCount))
+
+        for frame in 0..<frameCount {
+            let progress = Double(frame) / Double(frameCount)
+            let envelope = max(0, 1 - progress)
+            let sample = sin(2 * .pi * 1_600 * Double(frame) / Double(sampleRate))
+            let value = Int16(sample * envelope * Double(Int16.max) * 0.55)
+            data.appendLittleEndianInt16(value)
+        }
+
+        return data
+    }
+}
+
+private extension Data {
+    mutating func appendASCII(_ string: String) {
+        append(contentsOf: string.utf8)
+    }
+
+    mutating func appendLittleEndianUInt16(_ value: UInt16) {
+        appendLittleEndianBytes(value.littleEndian)
+    }
+
+    mutating func appendLittleEndianUInt32(_ value: UInt32) {
+        appendLittleEndianBytes(value.littleEndian)
+    }
+
+    mutating func appendLittleEndianInt16(_ value: Int16) {
+        appendLittleEndianBytes(value.littleEndian)
+    }
+
+    private mutating func appendLittleEndianBytes<T>(_ value: T) {
+        var mutableValue = value
+        Swift.withUnsafeBytes(of: &mutableValue) { buffer in
+            append(contentsOf: buffer)
+        }
+    }
+}
+#endif
 
 private extension SimulatedHeartRateZone {
     var title: String {

@@ -16,9 +16,9 @@ The iPhone app remains the future configuration surface. The Apple Watch app is 
 
 ## Watch Tracer Bullet
 
-The Watch app has a fake-HR metronome tracer bullet: press Start, use Zone 1 / Zone 2 / Zone 3 to simulate effort, and watch the target cadence move by the configured bump while the visual pulse ticks at the active SPM.
+The Watch app has a fake-HR audio metronome tracer bullet: press Start, use Zone 1 / Zone 2 / Zone 3 to simulate effort, and watch the target cadence move by the configured bump while the visual pulse and short audio tick run at the active SPM.
 
-The current runtime is intentionally visual/haptic-first. Simulator runs should be treated as visual validation only; real Apple Watch audio routing and latency are not validated yet.
+Simulator audio can be unreliable depending on the selected runtime and host audio route. Treat simulator runs as a visual pulse and basic launch check unless you can actually hear the tick. Real Apple Watch audibility, routing, latency, and Bluetooth behavior are not validated yet.
 
 ## First-Time Setup
 
