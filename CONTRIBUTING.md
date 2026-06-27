@@ -1,0 +1,74 @@
+# Contributing
+
+This repo is set up for an iOS + watchOS SwiftUI app with a small Swift Package target for platform-neutral logic.
+
+## Prerequisites
+
+- Install full Xcode from Apple. Command Line Tools alone are not enough for iOS/watchOS simulator builds or device installs.
+- Point `xcode-select` at full Xcode:
+
+```sh
+sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+xcode-select -p
+xcodebuild -version
+```
+
+- Sign in with an Apple Developer account in Xcode: `Xcode > Settings > Accounts`.
+- For real-device runs, use a paired iPhone and Apple Watch. The iPhone and Watch must be trusted, unlocked when prompted, and available in Xcode's device picker.
+- Automatic signing is enabled in the project. Set the development team locally in Xcode before installing on hardware.
+- Bluetooth headphones or AirPods are expected for future metronome route testing. Simulator checks cannot prove real Watch audio routing, latency, or Bluetooth behavior.
+
+## Local Checks
+
+These commands assume full Xcode is installed and selected with `xcode-select`. With Command Line Tools only, `swift build` may work, but `swift test` and `xcodebuild` can fail because XCTest, iOS simulators, and watchOS simulators are not available.
+
+Run platform-neutral tests from the package:
+
+```sh
+swift test
+```
+
+Build the iOS app shell without signing:
+
+```sh
+xcodebuild -project RuckABaby.xcodeproj -scheme RuckABaby -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
+```
+
+Build the watchOS app shell without signing:
+
+```sh
+xcodebuild -project RuckABaby.xcodeproj -scheme RuckABabyWatchApp -destination 'generic/platform=watchOS Simulator' CODE_SIGNING_ALLOWED=NO build
+```
+
+Run on hardware from Xcode after selecting a development team. Do not expect GitHub Actions to install on a real iPhone or Apple Watch.
+
+## Simulator vs Hardware
+
+Good simulator checks:
+
+- App target compilation.
+- SwiftUI shell launches.
+- Platform-neutral unit tests.
+- Basic iOS/watchOS navigation smoke tests once added.
+
+Requires real paired hardware:
+
+- Apple Watch workout behavior.
+- Live heart-rate and distance data.
+- HealthKit workout save behavior.
+- Watch-to-headphones Bluetooth route behavior.
+- Metronome audibility, latency, and safety checks.
+
+## Linting and Formatting
+
+Linting is intentionally deferred until after the tracer bullet. This repo currently has very little Swift code, and neither SwiftFormat nor SwiftLint is installed locally. Adding a formatter or linter now would create tool setup before the app has enough shape to make useful style decisions.
+
+Revisit this after the paired app can run on a real Apple Watch. At that point, prefer one low-friction command wired into CI.
+
+## Non-Goals For Story 0
+
+- No HealthKit workout tracking.
+- No real metronome.
+- No WatchConnectivity sync.
+- No App Store or TestFlight automation.
+- No production signing secrets in CI.
