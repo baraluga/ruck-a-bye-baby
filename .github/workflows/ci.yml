@@ -26,6 +26,9 @@ jobs:
           xcodebuild -version
           swift --version
 
+      - name: Validate git hook scripts
+        run: bash -n .githooks/pre-commit scripts/install-git-hooks.sh
+
       - name: Install SwiftLint
         run: brew install swiftlint
 

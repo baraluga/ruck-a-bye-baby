@@ -22,6 +22,23 @@ xcodebuild -version
 
 These commands assume full Xcode is installed and selected with `xcode-select`. With Command Line Tools only, `swift build` may work, but `swift test` and `xcodebuild` can fail because XCTest, iOS simulators, and watchOS simulators are not available.
 
+Install repo git hooks:
+
+```sh
+scripts/install-git-hooks.sh
+```
+
+The pre-commit hook checks only staged changes:
+
+- Staged Swift files are linted with SwiftLint.
+- `swift test` runs only when staged changes touch `Package.swift`, `Sources/`, or `Tests/`.
+
+Bypass the hook once when needed:
+
+```sh
+SKIP_LOCAL_HOOKS=1 git commit ...
+```
+
 Run lint if SwiftLint is installed:
 
 ```sh

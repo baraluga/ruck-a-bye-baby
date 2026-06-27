@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ "${SKIP_LOCAL_HOOKS:-}" == "1" ]]; then
+    echo "pre-commit: skipped because SKIP_LOCAL_HOOKS=1"
+    exit 0
+fi
+
+repo_root="$(git rev-parse --show-toplevel)"
+cd "$repo_root"
+
+staged_files=()
+while IFS= read -r -d '' file; do
+    staged_files+=("$file")
+done < <(git diff --cached --name-only --diff-filter=ACMR -z)
+
+if [[ "${#staged_files[@]}" -eq 0 ]]; then
+    echo "pre-commit: no staged files"
+    exit 0
+fi
+
+swift_files=()
+should_run_package_tests=0
+
+for file in "${staged_files[@]}"; do
+    if [[ "$file" == *.swift ]]; then
+        swift_files+=("$file")
+    fi
+
+    case "$file" in
+        Package.swift|Sources/*|Tests/*)
+            should_run_package_tests=1
+            ;;
+    esac
+done
+
+if [[ "${#swift_files[@]}" -gt 0 ]]; then
+    if ! command -v swiftlint >/dev/null 2>&1; then
+        echo "pre-commit: swiftlint is required for staged Swift changes."
+        echo "Install it with: brew install swiftlint"
+        echo "Bypass once with: SKIP_LOCAL_HOOKS=1 git commit ..."
+        exit 1
+    fi
+
+    echo "pre-commit: linting staged Swift files"
+    for file in "${swift_files[@]}"; do
+        swiftlint lint --strict --config "$repo_root/.swiftlint.yml" --path "$file"
+    done
+else
+    echo "pre-commit: no staged Swift files; skipping lint"
+fi
+
+if [[ "$should_run_package_tests" -eq 1 ]]; then
+    echo "pre-commit: running Swift package tests"
+    swift test
+else
+    echo "pre-commit: no package source/test changes; skipping swift test"
+fi
+
