@@ -146,7 +146,7 @@
 			name = RuckABabyWatchApp;
 			productName = RuckABabyWatchApp;
 			productReference = A10000000000000000000302 /* RuckABabyWatchApp.app */;
-			productType = "com.apple.product-type.application.watchapp2";
+			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
