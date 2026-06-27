@@ -44,7 +44,12 @@ if [[ "${#swift_files[@]}" -gt 0 ]]; then
 
     echo "pre-commit: linting staged Swift files"
     for file in "${swift_files[@]}"; do
-        swiftlint lint --strict --config "$repo_root/.swiftlint.yml" --path "$file"
+        if ! swiftlint lint --strict --config "$repo_root/.swiftlint.yml" "$file"; then
+            echo "pre-commit: SwiftLint failed."
+            echo "If this mentions SourceKit, install/select full Xcode:"
+            echo "  sudo xcode-select -s /Applications/Xcode.app/Contents/Developer"
+            exit 1
+        fi
     done
 else
     echo "pre-commit: no staged Swift files; skipping lint"
@@ -56,4 +61,3 @@ if [[ "$should_run_package_tests" -eq 1 ]]; then
 else
     echo "pre-commit: no package source/test changes; skipping swift test"
 fi
-
