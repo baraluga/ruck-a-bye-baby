@@ -1,8 +1,8 @@
 # Ruck-a-Bye Baby
 
-Watch-first rucking companion for the MVP in [epic #1](https://github.com/baraluga/ruck-a-bye-baby/issues/1). The current repo baseline tracks [Story 0](https://github.com/baraluga/ruck-a-bye-baby/issues/12).
+Watch-first rucking companion for the MVP in [epic #1](https://github.com/baraluga/ruck-a-bye-baby/issues/1).
 
-The iPhone app is the configuration surface. The Apple Watch app is the runtime surface. Story 0 only establishes the repo baseline for the next tracer-bullet story; it does not implement HealthKit workout tracking, WatchConnectivity, or the metronome.
+The iPhone app remains the future configuration surface. The Apple Watch app is the runtime surface and currently carries the fake-HR metronome tracer bullet. HealthKit workout tracking, WatchConnectivity, and iPhone settings remain deferred.
 
 ## Current Baseline
 
@@ -11,8 +11,14 @@ The iPhone app is the configuration surface. The Apple Watch app is the runtime 
 - Xcode project: `RuckABaby.xcodeproj`
 - App schemes: `RuckABaby`, `RuckABabyWatchApp`
 - Platform-neutral logic package: `RuckCore`
-- Starter tests: `Tests/RuckCoreTests`
+- Cadence control tests: `Tests/RuckCoreTests`
 - CI: SwiftLint, Swift package tests, unsigned iOS simulator build, unsigned watchOS simulator build
+
+## Watch Tracer Bullet
+
+The Watch app has a fake-HR metronome tracer bullet: press Start, use Zone 1 / Zone 2 / Zone 3 to simulate effort, and watch the target cadence move by the configured bump while the visual pulse ticks at the active SPM.
+
+The current runtime is intentionally visual/haptic-first. Simulator runs should be treated as visual validation only; real Apple Watch audio routing and latency are not validated yet.
 
 ## First-Time Setup
 
