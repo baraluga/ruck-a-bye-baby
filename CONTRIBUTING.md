@@ -22,6 +22,12 @@ xcodebuild -version
 
 These commands assume full Xcode is installed and selected with `xcode-select`. With Command Line Tools only, `swift build` may work, but `swift test` and `xcodebuild` can fail because XCTest, iOS simulators, and watchOS simulators are not available.
 
+Run lint if SwiftLint is installed:
+
+```sh
+swiftlint --strict
+```
+
 Run platform-neutral tests from the package:
 
 ```sh
@@ -61,9 +67,24 @@ Requires real paired hardware:
 
 ## Linting and Formatting
 
-Linting is intentionally deferred until after the tracer bullet. This repo currently has very little Swift code, and neither SwiftFormat nor SwiftLint is installed locally. Adding a formatter or linter now would create tool setup before the app has enough shape to make useful style decisions.
+SwiftLint runs in CI with `.swiftlint.yml` and should be treated as the current style gate. Install it locally with Homebrew when you want the same check before pushing:
 
-Revisit this after the paired app can run on a real Apple Watch. At that point, prefer one low-friction command wired into CI.
+```sh
+brew install swiftlint
+swiftlint --strict
+```
+
+SwiftFormat is intentionally deferred until after the tracer bullet. Formatting automation is useful, but this repo does not yet have enough app code to justify another moving part.
+
+## CI
+
+The `CI` workflow runs on pull requests, direct pushes to `main`, and manual dispatch. It currently:
+
+- Installs SwiftLint.
+- Runs `swiftlint --strict`.
+- Runs `swift test`.
+- Builds the iOS simulator target without signing.
+- Builds the watchOS simulator target without signing.
 
 ## Non-Goals For Story 0
 

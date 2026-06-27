@@ -1,0 +1,25 @@
+included:
+  - Apps
+  - Sources
+  - Tests
+
+excluded:
+  - .build
+  - DerivedData
+  - RuckABaby.xcodeproj
+
+strict: false
+reporter: "github-actions-logging"
+
+line_length:
+  warning: 120
+  error: 160
+  ignores_comments: true
+
+identifier_name:
+  min_length:
+    warning: 2
+  excluded:
+    - id
+    - hr
+

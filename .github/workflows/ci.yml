@@ -1,6 +1,9 @@
-name: PR
+name: CI
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
@@ -10,8 +13,8 @@ permissions:
   contents: read
 
 jobs:
-  build-test:
-    name: Build and test
+  lint-test-build:
+    name: Lint, test, and build
     runs-on: macos-15
     steps:
       - name: Checkout
@@ -22,6 +25,12 @@ jobs:
           xcode-select -p
           xcodebuild -version
           swift --version
+
+      - name: Install SwiftLint
+        run: brew install swiftlint
+
+      - name: Lint Swift
+        run: swiftlint --strict
 
       - name: Test platform-neutral logic
         run: swift test

@@ -12,6 +12,7 @@ The iPhone app is the configuration surface. The Apple Watch app is the runtime 
 - App schemes: `RuckABaby`, `RuckABabyWatchApp`
 - Platform-neutral logic package: `RuckCore`
 - Starter tests: `Tests/RuckCoreTests`
+- CI: SwiftLint, Swift package tests, unsigned iOS simulator build, unsigned watchOS simulator build
 
 ## First-Time Setup
 
