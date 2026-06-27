@@ -1,12 +1,12 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 6.2
 
 import PackageDescription
 
 let package = Package(
     name: "RuckABaby",
     platforms: [
-        .iOS(.v17),
-        .watchOS(.v10),
+        .iOS(.v26),
+        .watchOS(.v26),
         .macOS(.v14)
     ],
     products: [

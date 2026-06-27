@@ -6,8 +6,8 @@ The iPhone app is the configuration surface. The Apple Watch app is the runtime 
 
 ## Current Baseline
 
-- iOS deployment target: 17.0
-- watchOS deployment target: 10.0
+- iOS deployment target: 26.0
+- watchOS deployment target: 26.0
 - Xcode project: `RuckABaby.xcodeproj`
 - App schemes: `RuckABaby`, `RuckABabyWatchApp`
 - Platform-neutral logic package: `RuckCore`
